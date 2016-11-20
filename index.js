@@ -15,12 +15,33 @@ function queryState(defaults, history) {
   var query = history.get() || Object.create(null);
 
   var api = {
+
+    /**
+     * Gets current state.
+     *
+     * @param {string?} keyName if present then value for this key is returned.
+     * Otherwise the entire app state is returend.
+     */
     get: getValue,
+
+    /**
+     * Merges current app state with new key/value.
+     *
+     * @param {string} key name
+     * @param {string|number|date} value
+     */
     set: setValue,
+
+    /**
+     * Releases all resources acquired by query state. After calling this method
+     * no hash monitoring will happen and no more events will be fired.
+     */
     dispose: dispose,
-    getHistoryObject: getHistoryObject,
+
     onChange: onChange,
-    offChange: offChange
+    offChange: offChange,
+
+    getHistoryObject: getHistoryObject,
   }
 
   var eventBus = eventify({});
@@ -44,7 +65,7 @@ function queryState(defaults, history) {
     history.dispose();
 
     // And remove our own listeners
-    api.off();
+    eventBus.off();
   }
 
   function getValue(keyName) {

@@ -16,12 +16,33 @@ function queryState(defaults, history) {
   var query = history.get() || Object.create(null);
 
   var api = {
+
+    /**
+     * Gets current state.
+     *
+     * @param {string?} keyName if present then value for this key is returned.
+     * Otherwise the entire app state is returend.
+     */
     get: getValue,
+
+    /**
+     * Merges current app state with new key/value.
+     *
+     * @param {string} key name
+     * @param {string|number|date} value
+     */
     set: setValue,
+
+    /**
+     * Releases all resources acquired by query state. After calling this method
+     * no hash monitoring will happen and no more events will be fired.
+     */
     dispose: dispose,
-    getHistoryObject: getHistoryObject,
+
     onChange: onChange,
-    offChange: offChange
+    offChange: offChange,
+
+    getHistoryObject: getHistoryObject,
   }
 
   var eventBus = eventify({});
@@ -45,7 +66,7 @@ function queryState(defaults, history) {
     history.dispose();
 
     // And remove our own listeners
-    api.off();
+    eventBus.off();
   }
 
   function getValue(keyName) {
@@ -83,9 +104,9 @@ function validateHistoryAPI(history) {
 /**
  * Provides a `null` object that matches history API
  */
-module.exports = nullHistory;
+module.exports = inMemoryHistory;
 
-function nullHistory(defaults) {
+function inMemoryHistory(defaults) {
   var listeners = [];
   var lastQueryObject = defaults;
 
@@ -112,6 +133,10 @@ function nullHistory(defaults) {
   }
 
   function onChanged(changeCallback) {
+    if (typeof changeCallback !== 'function') {
+      throw new Error('changeCallback should be a function')
+    }
+
     listeners.push(changeCallback);
   }
 
@@ -215,13 +240,13 @@ function isISODateString(str) {
  */
 module.exports = windowHistory;
 
-var nullHistory = require('./nullHistory.js');
+var inMemoryHistory = require('./inMemoryHistory.js');
 var query = require('./query.js');
 
 function windowHistory(defaults) {
   // If we don't support window, we are probably running in node. Just return
-  // `null` object
-  if (typeof window === 'undefined') return nullHistory(defaults);
+  // in memory history
+  if (typeof window === 'undefined') return inMemoryHistory(defaults);
 
   // Store all `onChanged()` listeners here, so that we can have just one
   // `hashchange` listener, and notify one listeners within single event.
@@ -331,7 +356,7 @@ function windowHistory(defaults) {
   }
 }
 
-},{"./nullHistory.js":2,"./query.js":3}],5:[function(require,module,exports){
+},{"./inMemoryHistory.js":2,"./query.js":3}],5:[function(require,module,exports){
 module.exports = function(subject) {
   validateSubject(subject);
 

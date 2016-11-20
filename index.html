@@ -59,9 +59,6 @@
 
     // and listen to all events from query state:
     qs.onChange(updateInputBox);
-    function updateInputBox(appState) {
-      inputText.value = appState.name || '';
-    }
 
     // When input changes, we update query state too!
     inputText.addEventListener('keyup', updateQueryState);
@@ -70,6 +67,10 @@
 
     function updateQueryState(e) {
       qs.set('name', inputText.value);
+    }
+
+    function updateInputBox(appState) {
+      inputText.value = appState.name || '';
     }
   </script>
 </body>

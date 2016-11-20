@@ -34,3 +34,56 @@ test('it monitors events', function(t) {
 
   queryState.set('foo', 'bar');
 });
+
+test('it can unsubscribe from events', function(t) {
+  var queryState = makeQueryState();
+
+  queryState.onChange(fail);
+  queryState.offChange(fail);
+
+  queryState.set('foo', 'bar');
+
+  // end test a little later
+  setTimeout(function() { t.end(); }, 30);
+
+  function fail() { t.fail('this should never be called'); }
+});
+
+test('it can pass the context', function(t) {
+  var queryState = makeQueryState();
+  var ctx = {};
+
+  queryState.onChange(checkContext, ctx);
+  queryState.set('foo', 'bar');
+
+  function checkContext() {
+    t.ok(ctx === this, 'context is set correctly');
+    t.end();
+  }
+});
+
+test('it can dispose', function(t) {
+  var queryState = makeQueryState();
+  queryState.onChange(fail);
+  queryState.dispose();
+
+  queryState.set('foo', 'bar');
+
+  // end test a little later
+  setTimeout(function() { t.end(); }, 30);
+
+  function fail() { t.fail('this should never be called'); }
+});
+
+test('it can init default state', function(t) {
+  var defaults = {
+    foo: 'bar'
+  };
+  var queryState = makeQueryState(defaults);
+
+  var initializedState = queryState.get();
+  t.equals(Object.keys(initializedState).length, 1, 'state has just one key');
+  t.equals(initializedState.foo, defaults.foo, 'and it is the same as defaults');
+
+  t.end();
+});
