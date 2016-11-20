@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge' >
+  <meta charset='utf-8'>
+  <meta name='author' content='Andrei Kashcha'>
+  <title>Application state in query string</title>
+</head>
+
+<style type="text/css" media="screen">
+  body {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 60px;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  .docs {
+    margin-top: 20px;
+  }
+  h2, h3 {
+    font-weight: normal;
+  }
+  a {
+    color: #42b983;
+    text-decoration: none;
+  }
+</style>
+<body>
+  <h2>Query State</h2>
+  <h3>Simple application state in query string</h3>
+  <p>
+  Enter text below, and see how query string changes:
+  </p>
+  <div>
+   Hello <input type='text' id='name' placeholder='enter text here' autofocus></input>
+  </div>
+  <h2 class='docs'>
+    <a href='https://github.com/anvaka/query-state'>API</a>
+  </h2>
+
+  <script src='dist/query-state.js'></script>
+  <script type='text/javascript' charset='utf-8'>
+    var inputText = document.getElementById('name')
+
+    var qs = queryState();
+
+    // Initialize input box with current app state:
+    updateInputBox(qs.get())
+
+    // and listen to all events from query state:
+    qs.onChange(updateInputBox);
+    function updateInputBox(appState) {
+      inputText.value = appState.name || '';
+    }
+
+    // When input changes, we update query state too!
+    inputText.addEventListener('keyup', updateQueryState);
+    inputText.addEventListener('blur', updateQueryState);
+    inputText.addEventListener('keydown', updateQueryState);
+
+    function updateQueryState(e) {
+      qs.set('name', inputText.value);
+    }
+  </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # query-state
 
-Application state in query string
+Application state in query string.
 
 # license
 

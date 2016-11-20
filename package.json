@@ -4,7 +4,8 @@
   "description": "Application state in query string",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tap test/*.js",
+    "start": "browserify -s queryState ./index.js > ./dist/query-state.js && uglifyjs dist/query-state.js > dist/query-state.min.js"
   },
   "keywords": [
     "application",
@@ -17,5 +18,12 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/anvaka/query-state"
+  },
+  "dependencies": {
+    "ngraph.events": "0.0.4"
+  },
+  "devDependencies": {
+    "browserify": "^13.1.1",
+    "tap": "^8.0.1"
   }
 }
