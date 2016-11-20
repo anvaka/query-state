@@ -109,7 +109,8 @@ function queryState(defaults, history) {
     return api;
   }
 
-  function updateQuery(query) {
+  function updateQuery(newAppState) {
+    query = newAppState;
     eventBus.fire('change', query);
   }
 

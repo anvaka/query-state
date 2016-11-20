@@ -117,3 +117,16 @@ test('it can chain calls', function(t) {
 
   t.end();
 });
+
+test('it updates query when change fires', function(t) {
+  var qs = makeQueryState();
+  var history = qs.getHistoryObject();
+  history.set({
+    foo: 42
+  });
+
+  qs.onChange(function() {
+    t.equals(qs.get('foo'), 42, 'query state is updated from history');
+    t.end();
+  });
+})

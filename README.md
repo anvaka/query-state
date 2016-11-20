@@ -17,7 +17,7 @@ npm install query-state --save
 Or download from CDN:
 
 ```
-<script src='https://cdn.rawgit.com/anvaka/query-state/v3.0.0/dist/query-state.min.js'></script>
+<script src='https://cdn.rawgit.com/anvaka/query-state/v3.0.1/dist/query-state.min.js'></script>
 ```
 
 If you downloaded from CDN the library will be available under `queryState` global name.
