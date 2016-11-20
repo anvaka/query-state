@@ -4,6 +4,8 @@ Application state in query string.
 
 ![demo](https://raw.githubusercontent.com/anvaka/query-state/master/docs/demo.gif)
 
+https://anvaka.github.io/query-state/#?name=world
+
 # usage
 
 Grab it from npm and use with your favorite bundler:
