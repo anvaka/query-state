@@ -41,6 +41,45 @@ qs.set('answer', 42);
 console.log(window.location.hash.indexOf('answer=42')) // prints value > 0.
 ```
 
+## defaults
+
+If you want to initialize app state with default values, you can pass them into
+query state function:
+
+``` js
+// this will set query string to `answer=42`, unless it already has key called
+// "answer". In which case query string's value will take precedence.
+var qs = queryState({
+  answer: 42
+});
+```
+
+## type limitations
+
+This is a very simple module that currently does not support nested objects.
+I.e. you cannot set application state to `{foo: {bar: 42}}`. If you need this
+behavior, most likely this module is not for you.
+
+We do support primitive types serialization/deserialization:
+
+* Numbers
+* Dates
+* Strings
+
+## clean up
+
+Normally your app state will live as long as your application. However if you
+do need to clean up resources (e.g. unloading your app). you can call `qs.dispose()`
+
+``` js
+var qs = querySate();
+
+// use it...
+
+// and clean up when you need it:
+qs.dispose();
+```
+
 # license
 
 MIT
