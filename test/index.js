@@ -87,3 +87,23 @@ test('it can init default state', function(t) {
 
   t.end();
 });
+
+test('it can set properties if they are empty', function(t) {
+  var original = {
+    foo: 'bar'
+  };
+  var queryState = makeQueryState(original);
+
+  var moreProperties = {
+    foo: 'baz',
+    answer: 42
+  };
+
+  queryState.setIfEmpty(moreProperties);
+
+  var appState = queryState.get()
+  t.equals(appState.foo, 'bar', 'foo was not updated as it is not empty')
+  t.equals(appState.answer, 42, 'answer was added')
+
+  t.end();
+});

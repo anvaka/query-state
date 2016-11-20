@@ -6,6 +6,17 @@ module.exports = queryState;
 var eventify = require('ngraph.events');
 var windowHashHistory = require('./lib/windowHashHistory.js');
 
+/**
+ * Just a convenience function that returns singleton instance of a query state
+ */
+queryState.instance = instance;
+
+// this variable holds singleton instance of the query state
+var singletonQS;
+
+/**
+ * Creates new instance of the query state.
+ */
 function queryState(defaults, history) {
   history = history || windowHashHistory(defaults);
   validateHistoryAPI(history);
@@ -42,6 +53,8 @@ function queryState(defaults, history) {
     offChange: offChange,
 
     getHistoryObject: getHistoryObject,
+
+    setIfEmpty: setIfEmpty
   }
 
   var eventBus = eventify({});
@@ -91,6 +104,39 @@ function queryState(defaults, history) {
   function updateQuery(query) {
     eventBus.fire('change', query);
   }
+
+  function setIfEmpty(keyName, value) {
+    if (typeof keyName === 'object') {
+      Object.keys(keyName).forEach(function(key) {
+        // TODO: Can i remove code duplication? The main reason why I don't
+        // want recursion here is to avoid spamming `history.set()`
+        if (key in query) return; // key name is not empty
+
+        query[key] = keyName[key];
+      });
+    }
+
+    if (keyName in query) return; // key name is not empty
+    query[keyName] = value;
+
+    history.set(query);
+  }
+}
+
+/**
+ * Returns singleton instance of the query state.
+ *
+ * @param {Object} defaults - if present, then it is passed to the current instance
+ * of the query state. Defaults are applied only if they were not present before.
+ */
+function instance(defaults) {
+  if (!singletonQS) {
+    singletonQS = queryState(defaults);
+  } else if (defaults) {
+    singletonQS.setIfEmpty(defaults);
+  }
+
+  return singletonQS;
 }
 
 function validateHistoryAPI(history) {
