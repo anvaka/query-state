@@ -19,7 +19,7 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    margin-top: 60px;
+    margin-top: 40px;
   }
   * {
     box-sizing: border-box;
@@ -34,6 +34,9 @@
     color: #42b983;
     text-decoration: none;
   }
+  .sample, .sample input {
+    font-size: 18px;
+  }
 </style>
 <body>
   <h2>Query State</h2>
@@ -41,9 +44,9 @@
   <p>
   Enter text below, and see how query string changes:
   </p>
-  <div>
+  <p class='sample'>
    Hello <input type='text' id='name' placeholder='enter text here' autofocus></input>
-  </div>
+  </p>
   <h2 class='docs'>
     <a href='https://github.com/anvaka/query-state'>API</a>
   </h2>
