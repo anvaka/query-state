@@ -2,6 +2,8 @@
 
 Application state in query string.
 
+![demo](https://raw.githubusercontent.com/anvaka/query-state/master/docs/demo.gif)
+
 # usage
 
 Grab it from npm and use with your favorite bundler:
