@@ -44,6 +44,14 @@ function queryState(defaults, history) {
     set: setValue,
 
     /**
+     * Similar to `set()`, but only sets value if it was not set before.
+     *
+     * @param {string} key name
+     * @param {string|number|date} value
+     */
+    setIfEmpty: setIfEmpty,
+
+    /**
      * Releases all resources acquired by query state. After calling this method
      * no hash monitoring will happen and no more events will be fired.
      */
@@ -53,8 +61,6 @@ function queryState(defaults, history) {
     offChange: offChange,
 
     getHistoryObject: getHistoryObject,
-
-    setIfEmpty: setIfEmpty
   }
 
   var eventBus = eventify({});
@@ -99,6 +105,8 @@ function queryState(defaults, history) {
     }
 
     history.set(query);
+
+    return api;
   }
 
   function updateQuery(query) {
@@ -120,6 +128,8 @@ function queryState(defaults, history) {
     query[keyName] = value;
 
     history.set(query);
+
+    return api;
   }
 }
 

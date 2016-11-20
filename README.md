@@ -17,7 +17,7 @@ npm install query-state --save
 Or download from CDN:
 
 ```
-<script src='https://cdn.rawgit.com/anvaka/query-state/v2.0.0/dist/query-state.min.js'></script>
+<script src='https://cdn.rawgit.com/anvaka/query-state/v3.0.0/dist/query-state.min.js'></script>
 ```
 
 If you downloaded from CDN the library will be available under `queryState` global name.
@@ -40,6 +40,15 @@ qs.set('answer', 42);
 
 // Now the query string will have `answer=42` part in it.
 console.log(window.location.hash.indexOf('answer=42')) // prints value > 0.
+
+// You can also set multiple values at once:
+qs.set({
+  name: 'Haddaway',
+  song: 'What is love?'
+});
+
+// NOTE: The call above merges new properties. It appends two new properties to 
+// the current query string
 ```
 
 ## defaults

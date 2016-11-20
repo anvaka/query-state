@@ -107,3 +107,13 @@ test('it can set properties if they are empty', function(t) {
 
   t.end();
 });
+
+test('it can chain calls', function(t) {
+  var qs = makeQueryState();
+  qs.set('name', 'Haddaway').set('song', 'What is love?');
+
+  t.equals(qs.get('name'), 'Haddaway', 'name is set');
+  t.equals(qs.get('song'), 'What is love?', 'song is set');
+
+  t.end();
+});
