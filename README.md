@@ -82,7 +82,7 @@ Normally your app state will live as long as your application. However if you
 do need to clean up resources (e.g. unloading your app). you can call `qs.dispose()`
 
 ``` js
-var qs = querySate();
+var qs = queryState();
 
 // use it...
 
