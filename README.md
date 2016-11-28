@@ -17,7 +17,7 @@ npm install query-state --save
 Or download from CDN:
 
 ```
-<script src='https://cdn.rawgit.com/anvaka/query-state/v3.0.1/dist/query-state.min.js'></script>
+<script src='https://cdn.rawgit.com/anvaka/query-state/v3.0.3/dist/query-state.min.js'></script>
 ```
 
 If you downloaded from CDN the library will be available under `queryState` global name.
@@ -75,6 +75,52 @@ We do support primitive types serialization/deserialization:
 * Numbers
 * Dates
 * Strings
+
+# Sharing between modules (singleton)
+
+If you are using a bundler (e.g. browserify or webpack), its often desirable
+to have just one instance of the application state, shared between files. Normally
+this is accomplished via singleton pattern. The library exposes singleton
+instance for your convenience:
+
+
+``` js
+// fileA.js
+var stateInFileA = queryState.instance();
+
+// fileB.js
+var stateInFileB = queryState.instance();
+
+// Both `stateInFileA` and `stateInFileB` are the same:
+// assert(stateInFileA === stateInFileB); // this is true!
+```
+
+NOTE: This is "lazy" implementation of the singleton: The instance is not created
+until you call `queryState.instance()`. After initial call the return value is
+always the same.
+
+## Defaults in singleton scenario
+
+Each of your module may desire to pass its own defaults. You can do it by passing
+optional `defaults` object:
+
+``` js
+// fileA.js
+var stateInFileA = queryState.instance({name: 'John'});
+// The query string now has `name=John` part.
+
+// fileB.js
+var stateInFileB = queryState.instance({age: 42});
+// Now query string has both parts: `name=John&age=42`
+
+// fileC.js
+// Note: singleton instance never overwrites query string values. So if someone
+// sets argument that already exists, the library will ignore it:
+var stateInfileC = queryState.instance({age: 100, height: 180})
+
+// The query string still has age 42, not 100:
+// name=John&age=42&height=180
+```
 
 ## clean up
 

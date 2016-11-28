@@ -130,3 +130,13 @@ test('it updates query when change fires', function(t) {
     t.end();
   });
 })
+
+test('it can create singleton', function(t) {
+  var qsA = makeQueryState.instance({age: 42});
+  var qsB = makeQueryState.instance({age: 100, height: 180});
+  t.ok(qsA === qsB, 'they are the same')
+
+  t.equals(qsA.get('age'), 42, 'age is set to 42');
+  t.equals(qsA.get('height'), 180, 'height is 180');
+  t.end();
+});
