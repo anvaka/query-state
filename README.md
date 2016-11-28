@@ -76,7 +76,7 @@ We do support primitive types serialization/deserialization:
 * Dates
 * Strings
 
-# Sharing between modules (singleton)
+## Sharing between modules (singleton)
 
 If you are using a bundler (e.g. browserify or webpack), its often desirable
 to have just one instance of the application state, shared between files. Normally
