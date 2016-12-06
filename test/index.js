@@ -10,7 +10,7 @@ test('it can set app state', function(t) {
 
   queryState.set('another', '42');
   var anotherValue = queryState.get('another')
-  t.equals(anotherValue, '42', 'another value is set correctl');
+  t.equals(anotherValue, '42', 'another value is set correctly');
 
   var appState = queryState.get();
   t.deepEquals(appState, {

@@ -125,7 +125,7 @@ var stateInfileC = queryState.instance({age: 100, height: 180})
 ## clean up
 
 Normally your app state will live as long as your application. However if you
-do need to clean up resources (e.g. unloading your app). you can call `qs.dispose()`
+do need to clean up resources (e.g. unloading your app) you can call `qs.dispose()`
 
 ``` js
 var qs = queryState();

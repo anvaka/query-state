@@ -31,7 +31,7 @@ function queryState(defaults, history) {
      * Gets current state.
      *
      * @param {string?} keyName if present then value for this key is returned.
-     * Otherwise the entire app state is returend.
+     * Otherwise the entire app state is returned.
      */
     get: getValue,
 
@@ -117,7 +117,7 @@ function queryState(defaults, history) {
   function setIfEmpty(keyName, value) {
     if (typeof keyName === 'object') {
       Object.keys(keyName).forEach(function(key) {
-        // TODO: Can i remove code duplication? The main reason why I don't
+        // TODO: Can I remove code duplication? The main reason why I don't
         // want recursion here is to avoid spamming `history.set()`
         if (key in query) return; // key name is not empty
 
