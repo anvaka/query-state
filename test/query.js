@@ -32,3 +32,10 @@ test('it can handle nulls', function(t) {
   t.end();
 });
 
+
+test('it can handle empty strings', function(t) {
+  var restored = query.parse('foo=');
+  t.equals(restored.foo, '', 'foo value is set correctly');
+
+  t.end();
+});
