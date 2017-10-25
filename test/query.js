@@ -32,6 +32,19 @@ test('it can handle nulls', function(t) {
   t.end();
 });
 
+test('it can handle special symbols', function(t) {
+  var inputCode = 'Hello (:)';
+
+  var input = query.stringify({code: inputCode});
+
+  var restored = query.parse(input);
+
+  t.equals(input.indexOf('('), -1, '`(` is encoded');
+  t.equals(input.indexOf(')'), -1, '`)` is encoded');
+  t.equals(restored.code, inputCode, 'string is restored');
+  t.end();
+});
+
 
 test('it can handle empty strings', function(t) {
   var restored = query.parse('foo=');
