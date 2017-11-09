@@ -5,10 +5,22 @@
 module.exports = queryState;
 
 var eventify = require('ngraph.events');
-var windowHashHistory = require('./lib/windowHashHistory.js');
+var windowHistory = require('./lib/windowHistory.js');
 
-function queryState(defaults, history) {
-  history = history || windowHashHistory(defaults);
+/**
+ * Just a convenience function that returns singleton instance of a query state
+ */
+queryState.instance = instance;
+
+// this variable holds singleton instance of the query state
+var singletonQS;
+
+/**
+ * Creates new instance of the query state.
+ */
+function queryState(defaults, options) {
+  options = options || {};
+  var history = options.history || windowHistory(defaults, options);
   validateHistoryAPI(history);
 
   history.onChanged(updateQuery)
@@ -21,7 +33,7 @@ function queryState(defaults, history) {
      * Gets current state.
      *
      * @param {string?} keyName if present then value for this key is returned.
-     * Otherwise the entire app state is returend.
+     * Otherwise the entire app state is returned.
      */
     get: getValue,
 
@@ -32,6 +44,14 @@ function queryState(defaults, history) {
      * @param {string|number|date} value
      */
     set: setValue,
+
+    /**
+     * Similar to `set()`, but only sets value if it was not set before.
+     *
+     * @param {string} key name
+     * @param {string|number|date} value
+     */
+    setIfEmpty: setIfEmpty,
 
     /**
      * Releases all resources acquired by query state. After calling this method
@@ -87,11 +107,49 @@ function queryState(defaults, history) {
     }
 
     history.set(query);
+
+    return api;
   }
 
-  function updateQuery(query) {
+  function updateQuery(newAppState) {
+    query = newAppState;
     eventBus.fire('change', query);
   }
+
+  function setIfEmpty(keyName, value) {
+    if (typeof keyName === 'object') {
+      Object.keys(keyName).forEach(function(key) {
+        // TODO: Can I remove code duplication? The main reason why I don't
+        // want recursion here is to avoid spamming `history.set()`
+        if (key in query) return; // key name is not empty
+
+        query[key] = keyName[key];
+      });
+    }
+
+    if (keyName in query) return; // key name is not empty
+    query[keyName] = value;
+
+    history.set(query);
+
+    return api;
+  }
+}
+
+/**
+ * Returns singleton instance of the query state.
+ *
+ * @param {Object} defaults - if present, then it is passed to the current instance
+ * of the query state. Defaults are applied only if they were not present before.
+ */
+function instance(defaults) {
+  if (!singletonQS) {
+    singletonQS = queryState(defaults);
+  } else if (defaults) {
+    singletonQS.setIfEmpty(defaults);
+  }
+
+  return singletonQS;
 }
 
 function validateHistoryAPI(history) {
@@ -100,7 +158,7 @@ function validateHistoryAPI(history) {
   if (typeof history.onChanged !== 'function') throw new Error('onChanged is required');
 }
 
-},{"./lib/windowHashHistory.js":4,"ngraph.events":5}],2:[function(require,module,exports){
+},{"./lib/windowHistory.js":4,"ngraph.events":5}],2:[function(require,module,exports){
 /**
  * Provides a `null` object that matches history API
  */
@@ -164,7 +222,7 @@ function stringify(object) {
 
   function toPairs(key) {
     var value = object[key];
-    var pair = encodeURIComponent(key);
+    var pair = encodePart(key);
     if (value !== undefined) {
       pair += '=' + encodeValue(value);
     }
@@ -204,8 +262,20 @@ function encodeValue(value) {
   if (value instanceof Date) {
     value = value.toISOString();
   }
-  var uriValue = encodeURIComponent(value);
+  var uriValue = encodePart(value);
   return uriValue;
+}
+
+function encodePart(part) {
+  // We want to make sure that we also encode symbols like ( and ) correctly
+  var encoded = encodeURIComponent(part);
+  return encoded.replace(/[()]/g, saferEscape);
+}
+
+function saferEscape(character) {
+  if (character === ')') return '%29';
+  if (character === '(') return '%28';
+  return character; // What?
 }
 
 /**
@@ -213,15 +283,11 @@ function encodeValue(value) {
  */
 function decodeValue(value) {
   value = decodeURIComponent(value);
-  if (!isNaN(value)) {
-    return parseFloat(value);
-  }
-  if (isBolean(value)) {
-    return value === 'true';
-  }
-  if (isISODateString(value)) {
-    return new Date(value);
-  }
+
+  if (value === "") return value;
+  if (!isNaN(value)) return parseFloat(value);
+  if (isBolean(value)) return value === 'true';
+  if (isISODateString(value)) return new Date(value);
 
   return value;
 }
@@ -243,7 +309,7 @@ module.exports = windowHistory;
 var inMemoryHistory = require('./inMemoryHistory.js');
 var query = require('./query.js');
 
-function windowHistory(defaults) {
+function windowHistory(defaults, options) {
   // If we don't support window, we are probably running in node. Just return
   // in memory history
   if (typeof window === 'undefined') return inMemoryHistory(defaults);
@@ -252,10 +318,15 @@ function windowHistory(defaults) {
   // `hashchange` listener, and notify one listeners within single event.
   var listeners = [];
 
+  var useSearchPart = options && options.useSearch; // prefer query ? over hash #
+
   // This prefix is used for all query strings. So our state is stored as
   // my-app.com/#?key=value
-  var hashPrefix = '#?';
+  var hashPrefix = useSearchPart ? '?' : '#?';
 
+  if (options.rewriteHashToSearch) {
+    rewriteHashToSearch();
+  }
   init();
 
   // This is our public API:
@@ -285,7 +356,12 @@ function windowHistory(defaults) {
     /**
      * Gets current app state
      */
-    get: getStateFromHash
+    get: getStateFromHash,
+
+    /**
+     * Allows to rewrite current hash url into search url
+     */
+    rewriteHashToSearch: rewriteHashToSearch
   };
 
   // Public API is over. You can ignore this part.
@@ -304,6 +380,18 @@ function windowHistory(defaults) {
     }
 
     if (stateChanged) set(stateFromHash);
+  }
+
+  function rewriteHashToSearch() {
+    var mergedState = Object.create(null);
+
+    var searchString = window.location.search;
+    if (searchString) mergedState = Object.assign(mergedState, query.parse(searchString.substr(1)));
+
+    var hashString = window.location.hash;
+    if (hashString) mergedState = Object.assign(mergedState, query.parse(hashString.substr(2)));
+
+    set(mergedState);
   }
 
   function set(appState) {
@@ -350,8 +438,9 @@ function windowHistory(defaults) {
   }
 
   function getStateFromHash() {
-    var queryString = (window.location.hash || hashPrefix).substr(hashPrefix.length);
-
+    var baseString = useSearchPart ? window.location.search : window.location.hash;
+    // or symbol || is used to get empty string when no base string is present. 
+    var queryString = (baseString || hashPrefix).substr(hashPrefix.length);
     return query.parse(queryString);
   }
 }

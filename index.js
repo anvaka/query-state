@@ -17,8 +17,9 @@ var singletonQS;
 /**
  * Creates new instance of the query state.
  */
-function queryState(defaults, history) {
-  history = history || windowHistory(defaults);
+function queryState(defaults, options) {
+  options = options || {};
+  var history = options.history || windowHistory(defaults, options);
   validateHistoryAPI(history);
 
   history.onChanged(updateQuery)

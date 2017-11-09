@@ -17,7 +17,7 @@ npm install query-state --save
 Or download from CDN:
 
 ``` html
-<script src='https://cdn.rawgit.com/anvaka/query-state/v3.0.4/dist/query-state.min.js'></script>
+<script src='https://cdn.rawgit.com/anvaka/query-state/v4.0.0/dist/query-state.min.js'></script>
 ```
 
 If you downloaded from CDN the library will be available under `queryState` global name.
@@ -120,6 +120,23 @@ var stateInfileC = queryState.instance({age: 100, height: 180})
 
 // The query string still has age 42, not 100:
 // name=John&age=42&height=180
+```
+
+## search instead of hash
+
+By default `query-state` saves state in the `hash` part of the url. But what if
+we want to store state in the `search` part instead?
+
+Instead of awesome-site.com/**#?answer=42** we want awesome-site.com/**?answer=42**.
+
+Pass an optional argument to tell query-state use the search part:
+
+``` js
+var qs = queryState({
+  answer: 42
+}, {
+  useSearch: true
+});
 ```
 
 ## clean up
