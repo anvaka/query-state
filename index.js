@@ -4,7 +4,7 @@
 module.exports = queryState;
 
 var eventify = require('ngraph.events');
-var windowHashHistory = require('./lib/windowHashHistory.js');
+var windowHistory = require('./lib/windowHistory.js');
 
 /**
  * Just a convenience function that returns singleton instance of a query state
@@ -18,7 +18,7 @@ var singletonQS;
  * Creates new instance of the query state.
  */
 function queryState(defaults, history) {
-  history = history || windowHashHistory(defaults);
+  history = history || windowHistory(defaults);
   validateHistoryAPI(history);
 
   history.onChanged(updateQuery)
