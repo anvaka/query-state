@@ -45,6 +45,11 @@ function queryState(defaults, options) {
     set: setValue,
 
     /**
+     * Removes value from the query string
+     */
+    unset: unsetValue,
+
+    /**
      * Similar to `set()`, but only sets value if it was not set before.
      *
      * @param {string} key name
@@ -105,6 +110,15 @@ function queryState(defaults, options) {
       query[keyName] = value;
     }
 
+    history.set(query);
+
+    return api;
+  }
+
+  function unsetValue(keyName) {
+    if (!(keyName in query)) return; // nothing to do
+
+    delete query[keyName];
     history.set(query);
 
     return api;
