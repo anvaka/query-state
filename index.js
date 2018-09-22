@@ -155,9 +155,9 @@ function queryState(defaults, options) {
  * @param {Object} defaults - if present, then it is passed to the current instance
  * of the query state. Defaults are applied only if they were not present before.
  */
-function instance(defaults) {
+function instance(defaults, options) {
   if (!singletonQS) {
-    singletonQS = queryState(defaults);
+    singletonQS = queryState(defaults, options);
   } else if (defaults) {
     singletonQS.setIfEmpty(defaults);
   }
