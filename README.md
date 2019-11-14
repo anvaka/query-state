@@ -139,6 +139,10 @@ var qs = queryState({
 });
 ```
 
+This can be especially useful if you are planning to share links on social media,
+as hash part of the query string is not visible to the servers, and they often
+consider two different links to be the same.
+
 ## clean up
 
 Normally your app state will live as long as your application. However if you
