@@ -1,6 +1,6 @@
 {
   "name": "query-state",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "description": "Application state in query string",
   "main": "index.js",
   "scripts": {
