@@ -116,7 +116,7 @@ var stateInFileB = queryState.instance({age: 42});
 // fileC.js
 // Note: singleton instance never overwrites query string values. So if someone
 // sets argument that already exists, the library will ignore it:
-var stateInfileC = queryState.instance({age: 100, height: 180})
+var stateInFileC = queryState.instance({age: 100, height: 180})
 
 // The query string still has age 42, not 100:
 // name=John&age=42&height=180
