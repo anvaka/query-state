@@ -1,4 +1,4 @@
-# query-state [![Build Status](https://travis-ci.org/anvaka/query-state.svg?branch=master)](https://travis-ci.org/anvaka/query-state)
+# query-state [![build status](https://github.com/anvaka/query-state/actions/workflows/tests.yaml/badge.svg)](https://github.com/anvaka/query-state/actions/workflows/tests.yaml)
 
 Application state in query string.
 
