@@ -4,7 +4,7 @@
   "description": "Application state in query string",
   "main": "index.js",
   "scripts": {
-    "test": "tap test/*.js",
+    "test": "tap --branches=40 --lines=40 --statements=40 --functions=40 test/*.js",
     "start": "browserify -s queryState ./index.js > ./dist/query-state.js && uglifyjs dist/query-state.js > dist/query-state.min.js"
   },
   "keywords": [
@@ -23,7 +23,7 @@
     "ngraph.events": "0.0.4"
   },
   "devDependencies": {
-    "browserify": "^13.1.1",
-    "tap": "^8.0.1"
+    "browserify": "^17.0.0",
+    "tap": "^15.0.9"
   }
 }
