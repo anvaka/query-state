@@ -6,14 +6,14 @@ test('it can set app state', function(t) {
 
   queryState.set('foo', 'bar');
   var fooValue = queryState.get('foo')
-  t.equals(fooValue, 'bar', 'foo value is set correctly');
+  t.equal(fooValue, 'bar', 'foo value is set correctly');
 
   queryState.set('another', '42');
   var anotherValue = queryState.get('another')
-  t.equals(anotherValue, '42', 'another value is set correctly');
+  t.equal(anotherValue, '42', 'another value is set correctly');
 
   var appState = queryState.get();
-  t.deepEquals(appState, {
+  t.same(appState, {
     foo: 'bar',
     another: '42'
   }, 'the entire state is correct')
@@ -25,7 +25,7 @@ test('it monitors events', function(t) {
   var queryState = makeQueryState();
 
   queryState.onChange(function(newState) {
-    t.deepEquals(newState, {
+    t.same(newState, {
       foo: 'bar'
     }, 'query state changed');
 
@@ -82,8 +82,8 @@ test('it can init default state', function(t) {
   var queryState = makeQueryState(defaults);
 
   var initializedState = queryState.get();
-  t.equals(Object.keys(initializedState).length, 1, 'state has just one key');
-  t.equals(initializedState.foo, defaults.foo, 'and it is the same as defaults');
+  t.equal(Object.keys(initializedState).length, 1, 'state has just one key');
+  t.equal(initializedState.foo, defaults.foo, 'and it is the same as defaults');
 
   t.end();
 });
@@ -102,8 +102,8 @@ test('it can set properties if they are empty', function(t) {
   queryState.setIfEmpty(moreProperties);
 
   var appState = queryState.get()
-  t.equals(appState.foo, 'bar', 'foo was not updated as it is not empty')
-  t.equals(appState.answer, 42, 'answer was added')
+  t.equal(appState.foo, 'bar', 'foo was not updated as it is not empty')
+  t.equal(appState.answer, 42, 'answer was added')
 
   t.end();
 });
@@ -112,8 +112,8 @@ test('it can chain calls', function(t) {
   var qs = makeQueryState();
   qs.set('name', 'Haddaway').set('song', 'What is love?');
 
-  t.equals(qs.get('name'), 'Haddaway', 'name is set');
-  t.equals(qs.get('song'), 'What is love?', 'song is set');
+  t.equal(qs.get('name'), 'Haddaway', 'name is set');
+  t.equal(qs.get('song'), 'What is love?', 'song is set');
 
   t.end();
 });
@@ -126,7 +126,7 @@ test('it updates query when change fires', function(t) {
   });
 
   qs.onChange(function() {
-    t.equals(qs.get('foo'), 42, 'query state is updated from history');
+    t.equal(qs.get('foo'), 42, 'query state is updated from history');
     t.end();
   });
 })
@@ -136,7 +136,7 @@ test('it can create singleton', function(t) {
   var qsB = makeQueryState.instance({age: 100, height: 180});
   t.ok(qsA === qsB, 'they are the same')
 
-  t.equals(qsA.get('age'), 42, 'age is set to 42');
-  t.equals(qsA.get('height'), 180, 'height is 180');
+  t.equal(qsA.get('age'), 42, 'age is set to 42');
+  t.equal(qsA.get('height'), 180, 'height is 180');
   t.end();
 });
