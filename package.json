@@ -20,10 +20,11 @@
     "url": "https://github.com/anvaka/query-state"
   },
   "dependencies": {
-    "ngraph.events": "0.0.4"
+    "ngraph.events": "1.2.1"
   },
   "devDependencies": {
     "browserify": "^17.0.0",
-    "tap": "^15.0.9"
+    "uglify-js": "^3.13.5",
+    "tap": "^15.1.6"
   }
 }

@@ -46,6 +46,11 @@ function queryState(defaults, options) {
     set: setValue,
 
     /**
+     * Removes value from the query string
+     */
+    unset: unsetValue,
+
+    /**
      * Similar to `set()`, but only sets value if it was not set before.
      *
      * @param {string} key name
@@ -111,6 +116,15 @@ function queryState(defaults, options) {
     return api;
   }
 
+  function unsetValue(keyName) {
+    if (!(keyName in query)) return; // nothing to do
+
+    delete query[keyName];
+    history.set(query);
+
+    return api;
+  }
+
   function updateQuery(newAppState) {
     query = newAppState;
     eventBus.fire('change', query);
@@ -142,9 +156,9 @@ function queryState(defaults, options) {
  * @param {Object} defaults - if present, then it is passed to the current instance
  * of the query state. Defaults are applied only if they were not present before.
  */
-function instance(defaults) {
+function instance(defaults, options) {
   if (!singletonQS) {
-    singletonQS = queryState(defaults);
+    singletonQS = queryState(defaults, options);
   } else if (defaults) {
     singletonQS.setIfEmpty(defaults);
   }
@@ -286,13 +300,13 @@ function decodeValue(value) {
 
   if (value === "") return value;
   if (!isNaN(value)) return parseFloat(value);
-  if (isBolean(value)) return value === 'true';
+  if (isBoolean(value)) return value === 'true';
   if (isISODateString(value)) return new Date(value);
 
   return value;
 }
 
-function isBolean(strValue) {
+function isBoolean(strValue) {
   return strValue === 'true' || strValue === 'false';
 }
 
@@ -396,6 +410,10 @@ function windowHistory(defaults, options) {
 
   function set(appState) {
     var hash = hashPrefix + query.stringify(appState);
+    if (useSearchPart && window.location.hash) {
+      // preserve hash if it was there.
+      hash += window.location.hash;
+    }
 
     if (window.history) {
       window.history.replaceState(undefined, undefined, hash);
@@ -446,7 +464,7 @@ function windowHistory(defaults, options) {
 }
 
 },{"./inMemoryHistory.js":2,"./query.js":3}],5:[function(require,module,exports){
-module.exports = function(subject) {
+module.exports = function eventify(subject) {
   validateSubject(subject);
 
   var eventsStorage = createEventsStorage(subject);
